@@ -19,7 +19,7 @@ namespace L01_2020PF601.Controllers
         [Route("GetTodo")]
         public IActionResult Get()
         {
-            List<usuarios> listadoEquipo = (from e in _equipos_context.Usuarios
+            List<usuarios> listadoEquipo = (from e in _equipos_context.usuarios
                                            select e).ToList();
             if (listadoEquipo.Count() == 0)
             {

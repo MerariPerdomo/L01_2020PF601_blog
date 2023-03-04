@@ -20,8 +20,8 @@ namespace L01_2020PF601.Controllers
             [Route("GetTodo")]
             public IActionResult Get()
             {
-                List<usuarios> listadoEquipo = (from e in equiposC.calificaciones
-                                                select e).ToList();
+                List<usuarios> listadoEquipo = ((List<usuarios>)(from e in equiposC.calificaciones
+                                                select e)).ToList();
                 if (listadoEquipo.Count() == 0)
                 {
                     return NotFound();
@@ -32,14 +32,14 @@ namespace L01_2020PF601.Controllers
             [Route("GetById/{id}")]
             public IActionResult Get(int id)
             {
-                usuarios? usuarios = (from e in equiposC.usuarios
-                                      where e.usuarioId == id
+                usuarios? usuarios = (from e in equiposC.calificaciones
+                                      where e.calificacionId == 
                                       select e).FirstOrDefault();
                 if (usuarios == null)
                 {
                     return NotFound();
                 }
-                return Ok(usuarios);
+                return Ok(calificaciones);
             }
             [HttpGet]
             [Route("buscador/{filtro}")]
