@@ -20,22 +20,38 @@ namespace L01_2020PF601.Controllers
             [Route("GetTodo")]
             public IActionResult Get()
             {
-                List<usuarios> listadoEquipo = ((List<usuarios>)(from e in equiposC.calificaciones
-                                                select e)).ToList();
-                if (listadoEquipo.Count() == 0)
+                List<calificaciones> listadocalificaciones = (from e in equiposC.calificaciones
+                                            select e).ToList();
+            if (listadocalificaciones.Count() == 0)
+            {
+                return NotFound();
+            }
+            return Ok(listadocalificaciones);
+            }
+
+            [HttpGet]
+            [Route("GetCalfPub/{pubid}")]
+            public IActionResult GetCalfPub(int pubid)
+            {
+                List<calificaciones> listPub = (from e in equiposC.calificaciones
+                                      where e.publicacionId == pubid
+                                      select e).ToList();
+                if (listPub.Count == 0)
                 {
                     return NotFound();
                 }
-                return Ok(listadoEquipo);
+                return Ok(listPub);
             }
-            [HttpGet]
-            [Route("GetById/{id}")]
-            public IActionResult Get(int id)
+
+
+        [HttpGet]
+            [Route("GetById/{idC}")]
+            public IActionResult GetById(int idC)
             {
-                usuarios? usuarios = (from e in equiposC.calificaciones
-                                      where e.calificacionId == 
-                                      select e).FirstOrDefault();
-                if (usuarios == null)
+                calificaciones? calificaciones = (from e in equiposC.calificaciones
+                                      where e.calificacionId == idC
+                                                  select e).FirstOrDefault();
+                if (calificaciones == null)
                 {
                     return NotFound();
                 }
@@ -43,33 +59,32 @@ namespace L01_2020PF601.Controllers
             }
             [HttpGet]
             [Route("buscador/{filtro}")]
-            public IActionResult Buscador(string filtro)
+            public IActionResult Buscador(int filtro)
             {
-                usuarios? usuarios = (from e in equiposC.usuarios
-                                      where e.nombre.Contains(filtro)
+                calificaciones? calificaciones = (from e in equiposC.calificaciones
+                                      where e.calificacionId == filtro
                                       select e).FirstOrDefault();
-                if (usuarios == null)
+                if (calificaciones == null)
                 {
                     return NotFound();
                 }
-                return Ok(usuarios);
+                return Ok(calificaciones);
             }
             [HttpPut]
             [Route("actualizar/{id}")]
-            public IActionResult Actualizar(int id, [FromBody] usuarios equipoModificar)
+            public IActionResult Actualizar(int id, [FromBody] calificaciones equipoModificar)
             {
-                usuarios? equiposActual = (from e in equiposC.usuarios
+                calificaciones? equiposActual = (from e in equiposC.calificaciones
                                            where e.usuarioId == id
                                            select e).FirstOrDefault();
                 if (equiposActual == null)
                 {
                     return NotFound();
                 }
-                equiposActual.nombre = equipoModificar.nombre;
-                equiposActual.rolId = equipoModificar.rolId;
-                equiposActual.nombreUsuario = equipoModificar.nombreUsuario;
-                equiposActual.clave = equipoModificar.clave;
-                equiposActual.apellido = equipoModificar.apellido;
+                equiposActual.calificacionId = equipoModificar.calificacionId;
+                equiposActual.publicacionId = equipoModificar.publicacionId;
+                equiposActual.usuarioId = equipoModificar.usuarioId;
+                equiposActual.calificacion = equipoModificar.calificacion;
 
                 equiposC.Entry(equiposActual).State = EntityState.Modified;
                 equiposC.SaveChanges();
@@ -78,20 +93,19 @@ namespace L01_2020PF601.Controllers
             }
             [HttpDelete]
             [Route("eliminar/{id}")]
-            public IActionResult EliminarEquipo(int id)
+            public IActionResult EliminarCalificacion(int id)
             {
-                usuarios? usuario
-             = (from e in equiposC.usuarios
-                where e.usuarioId == id
+                calificaciones? calificaciones = (from e in equiposC.calificaciones
+                where e.calificacionId == id
                 select e).FirstOrDefault();
-                if (usuario == null)
+                if (calificaciones == null)
                 {
                     return NotFound();
                 }
-                equiposC.usuarios.Attach(usuario);
-                equiposC.Remove(usuario);
+                equiposC.calificaciones.Attach(calificaciones);
+                equiposC.Remove(calificaciones);
                 equiposC.SaveChanges();
-                return Ok(usuario);
+                return Ok(calificaciones);
             }
         }
     }

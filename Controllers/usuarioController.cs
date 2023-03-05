@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace L01_2020PF601.Controllers
 {
@@ -28,18 +29,33 @@ namespace L01_2020PF601.Controllers
             return Ok(listadoEquipo);
         }
         [HttpGet]
-        [Route("GetById/{id}")]
-        public IActionResult Get(int id)
+        [Route("GetRol/{rol}")]
+        public IActionResult Get(int rol)
         {
             usuarios? usuarios = (from e in _equipos_context.usuarios
-                                where e.usuarioId == id
-                                select e).FirstOrDefault();
+                                  where e.rolId == rol
+                                            select e).FirstOrDefault();
             if (usuarios == null)
             {
                 return NotFound();
             }
             return Ok(usuarios);
         }
+
+        [HttpGet]
+        [Route("GetNameLastName/{nombre}/{apellido}")]
+        public IActionResult Get(string nombre, string apellido)
+        {
+            usuarios? usuarios = (from e in _equipos_context.usuarios
+                                where e.nombre.Contains( nombre) &&  e.apellido.Contains(apellido)
+                                  select e).FirstOrDefault();
+            if (usuarios == null)
+            {
+                return NotFound();
+            }
+            return Ok(usuarios);
+        }
+
         [HttpGet]
         [Route("buscador/{filtro}")]
         public IActionResult Buscador(string filtro)
@@ -79,8 +95,7 @@ namespace L01_2020PF601.Controllers
         [Route("eliminar/{id}")]
         public IActionResult EliminarEquipo(int id)
         {
-            usuarios? usuario
-         = (from e in _equipos_context.usuarios
+            usuarios? usuario= (from e in _equipos_context.usuarios
                                 where e.usuarioId == id
                                 select e).FirstOrDefault();
             if (usuario == null)
@@ -95,4 +110,4 @@ namespace L01_2020PF601.Controllers
     }
 
 }
-}
+
